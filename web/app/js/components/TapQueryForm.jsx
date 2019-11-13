@@ -56,7 +56,7 @@ const styles = theme => ({
     flexWrap: 'wrap',
   },
   formControl: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
     minWidth: 200,
   },
   selectEmpty: {
@@ -243,7 +243,7 @@ class TapQueryForm extends React.Component {
       <React.Fragment>
         <InputLabel htmlFor={resourceKey}>{_startCase(resourceKey)}</InputLabel>
         <Select
-          value={nsEmpty ? _startCase(resourceKey) : this.state.query[resourceKey]}
+          value={!nsEmpty && resourceOptions.includes(this.state.query[resourceKey]) ? this.state.query[resourceKey] : ""}
           onChange={this.handleFormChange(resourceKey)}
           inputProps={{ name: resourceKey, id: resourceKey }}
           className={classes.selectEmpty}>
@@ -263,7 +263,7 @@ class TapQueryForm extends React.Component {
       <React.Fragment>
         <InputLabel htmlFor={namespaceKey}>{title}</InputLabel>
         <Select
-          value={this.state.query[namespaceKey]}
+          value={this.state.autocomplete[namespaceKey].includes(this.state.query[namespaceKey]) ? this.state.query[namespaceKey] : ""}
           onChange={this.handleFormChange(namespaceKey, resourceKey)}
           inputProps={{ name: namespaceKey, id: namespaceKey }}
           className={classes.selectEmpty}>
@@ -315,7 +315,7 @@ class TapQueryForm extends React.Component {
     return (
       <Grid container>
 
-        <Grid container spacing={24}>
+        <Grid container spacing={3}>
           <Grid item xs={6} md={3}>
             <FormControl className={classes.formControl}>
               {this.renderNamespaceSelect("To Namespace", "toNamespace", "toResource")}
@@ -328,7 +328,7 @@ class TapQueryForm extends React.Component {
           </Grid>
         </Grid>
 
-        <Grid container spacing={24}>
+        <Grid container spacing={3}>
           <Grid item xs={6} md={3}>
             <FormControl className={classes.formControl}>
               <InputLabel htmlFor="authority">Authority</InputLabel>
@@ -351,7 +351,7 @@ class TapQueryForm extends React.Component {
           </Grid>
         </Grid>
 
-        <Grid container spacing={24}>
+        <Grid container spacing={3}>
           <Grid item xs={6} md={3}>
             { this.renderTextInput("Scheme", "scheme", "Display requests with this scheme") }
           </Grid>
@@ -403,7 +403,7 @@ class TapQueryForm extends React.Component {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Grid container spacing={24}>
+          <Grid container spacing={3}>
             <Grid item xs={6} md={3}>
               <FormControl className={classes.formControl}>
                 {this.renderNamespaceSelect("Namespace", "namespace", "resource")}
