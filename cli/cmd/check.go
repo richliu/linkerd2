@@ -163,6 +163,8 @@ func configureAndRunChecks(wout io.Writer, werr io.Writer, stage string, options
 			} else {
 				checks = append(checks, healthcheck.LinkerdControlPlaneVersionChecks)
 			}
+
+			checks = append(checks, healthcheck.LinkerdHaChecks)
 		}
 	}
 

@@ -110,6 +110,10 @@ const (
 	// from LinkerdVersionChecks, so those checks must be added first.
 	LinkerdDataPlaneChecks CategoryID = "linkerd-data-plane"
 
+	// LinkerdHaChecks adds checks to validate that the HA configuration
+	// is correct. These checks are no ops if linkerd is not in HA mode
+	LinkerdHaChecks CategoryID = "linkerd-ha-checks"
+
 	// linkerdCniResourceLabel is the label key that is used to identify
 	// whether a Kubernetes resource is related to the install-cni command
 	// The value is expected to be "true", "false" or "", where "false" and
@@ -600,14 +604,6 @@ func (hc *HealthChecker) allCategories() []category {
 						return hc.checkPodSecurityPolicies(true)
 					},
 				},
-				{
-					description: "pod injection disabled on kube-system (HA only)",
-					hintAnchor:  "l5d-injection-disabled",
-					warning:     true,
-					check: func(context.Context) error {
-						return hc.checkHAMetadataPresentOnKubeSystemNamespace()
-					},
-				},
 			},
 		},
 		{
@@ -869,6 +865,19 @@ func (hc *HealthChecker) allCategories() []category {
 					warning:     true,
 					check: func(ctx context.Context) error {
 						return hc.checkDataPlaneProxiesCertificate()
+					},
+				},
+			},
+		},
+		{
+			id: LinkerdHaChecks,
+			checkers: []checker{
+				{
+					description: "pod injection disabled on kube-system",
+					hintAnchor:  "l5d-injection-disabled",
+					warning:     true,
+					check: func(context.Context) error {
+						return hc.checkHAMetadataPresentOnKubeSystemNamespace()
 					},
 				},
 			},
