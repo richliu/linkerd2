@@ -50,8 +50,4 @@ linkerd-data-plane
 √ data plane and cli versions match
 √ data plane proxies certificate match CA
 
-linkerd-ha-checks
------------------
-√ pod injection disabled on kube-system
-
 Status check results are √
