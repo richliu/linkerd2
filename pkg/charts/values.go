@@ -55,6 +55,7 @@ type (
 		Identity                    *Identity
 		ProxyInjector               *ProxyInjector
 		ProfileValidator            *ProfileValidator
+		GatewayAnnotator            *GatewayAnnotator
 		Tap                         *Tap
 		Proxy                       *Proxy
 		ProxyInit                   *ProxyInit
@@ -177,6 +178,11 @@ type (
 
 	// ProfileValidator has all the profile validator's Helm variables
 	ProfileValidator struct {
+		*TLS
+	}
+
+	// GatewayAnnotator has all the profile validator's Helm variables
+	GatewayAnnotator struct {
 		*TLS
 	}
 

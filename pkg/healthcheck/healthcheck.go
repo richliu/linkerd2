@@ -1175,7 +1175,10 @@ func (hc *HealthChecker) checkMutatingWebhookConfigurations(shouldExist bool) er
 		objects = append(objects, &item)
 	}
 
-	return checkResources("MutatingWebhookConfigurations", objects, []string{k8s.ProxyInjectorWebhookConfigName}, shouldExist)
+	return checkResources("MutatingWebhookConfigurations", objects, []string{
+		k8s.ProxyInjectorWebhookConfigName,
+		k8s.GatewayAnnotatorWebhookConfigName,
+	}, shouldExist)
 }
 
 func (hc *HealthChecker) checkValidatingWebhookConfigurations(shouldExist bool) error {

@@ -1,0 +1,89 @@
+---
+###
+### Gateway Annotator RBAC
+###
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: linkerd-{{.Values.Namespace}}-gateway-annotator
+  labels:
+    {{.Values.ControllerComponentLabel}}: gateway-annotator
+    {{.Values.ControllerNamespaceLabel}}: {{.Values.Namespace}}
+rules:
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: linkerd-{{.Values.Namespace}}-gateway-annotator
+  labels:
+    {{.Values.ControllerComponentLabel}}: gateway-annotator
+    {{.Values.ControllerNamespaceLabel}}: {{.Values.Namespace}}
+subjects:
+- kind: ServiceAccount
+  name: linkerd-gateway-annotator
+  namespace: {{.Values.Namespace}}
+  apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: linkerd-{{.Values.Namespace}}-gateway-annotator
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: linkerd-gateway-annotator
+  namespace: {{.Values.Namespace}}
+  labels:
+    {{.Values.ControllerComponentLabel}}: gateway-annotator
+    {{.Values.ControllerNamespaceLabel}}: {{.Values.Namespace}}
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: linkerd-gateway-annotator-tls
+  namespace: {{ .Values.Namespace }}
+  labels:
+    {{.Values.ControllerComponentLabel}}: gateway-annotator
+    {{.Values.ControllerNamespaceLabel}}: {{.Values.Namespace}}
+  annotations:
+    {{.Values.CreatedByAnnotation}}: {{default (printf "linkerd/helm %s" .Values.LinkerdVersion) .Values.CliVersion}}
+type: Opaque
+data:
+  {{ $ca := genCA (printf "linkerd-gateway-annotator.%s.svc" .Values.Namespace) 365 -}}
+  crt.pem: {{ ternary (b64enc $ca.Cert) (b64enc (trim .Values.GatewayAnnotator.CrtPEM)) (empty .Values.GatewayAnnotator.CrtPEM) }}
+  key.pem: {{ ternary (b64enc $ca.Key) (b64enc (trim .Values.GatewayAnnotator.KeyPEM)) (empty .Values.GatewayAnnotator.KeyPEM) }}
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: linkerd-gateway-annotator-webhook-config
+  labels:
+    {{.Values.ControllerComponentLabel}}: gateway-annotator
+    {{.Values.ControllerNamespaceLabel}}: {{.Values.Namespace}}
+webhooks:
+- name: linkerd-gateway-annotator.linkerd.io
+  namespaceSelector:
+    matchExpressions:
+    - key: config.linkerd.io/admission-webhooks
+      operator: NotIn
+      values:
+      - disabled
+  clientConfig:
+    service:
+      name: linkerd-gateway-annotator
+      namespace: {{ .Values.Namespace }}
+      path: "/"
+    caBundle: {{ ternary (b64enc $ca.Cert) (b64enc (trim .Values.GatewayAnnotator.CrtPEM)) (empty .Values.GatewayAnnotator.CrtPEM) }}
+  failurePolicy: {{.Values.WebhookFailurePolicy}}
+  rules:
+  - operations: ["CREATE"]
+    apiGroups: ["extensions", "networking.k8s.io"]
+    apiVersions: ["v1beta1"]
+    resources: ["ingresses"]
+  {{- if not .Values.OmitWebhookSideEffects }}
+  sideEffects: None
+  {{- end }}
