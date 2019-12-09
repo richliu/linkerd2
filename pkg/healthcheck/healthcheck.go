@@ -110,9 +110,9 @@ const (
 	// from LinkerdVersionChecks, so those checks must be added first.
 	LinkerdDataPlaneChecks CategoryID = "linkerd-data-plane"
 
-	// LinkerdHaChecks adds checks to validate that the HA configuration
+	// LinkerdHAChecks adds checks to validate that the HA configuration
 	// is correct. These checks are no ops if linkerd is not in HA mode
-	LinkerdHaChecks CategoryID = "linkerd-ha-checks"
+	LinkerdHAChecks CategoryID = "linkerd-ha-checks"
 
 	// linkerdCniResourceLabel is the label key that is used to identify
 	// whether a Kubernetes resource is related to the install-cni command
@@ -871,7 +871,7 @@ func (hc *HealthChecker) allCategories() []category {
 			},
 		},
 		{
-			id: LinkerdHaChecks,
+			id: LinkerdHAChecks,
 			checkers: []checker{
 				{
 					description: "pod injection disabled on kube-system",
@@ -882,9 +882,7 @@ func (hc *HealthChecker) allCategories() []category {
 					},
 				},
 			},
-			shouldRun: func() bool {
-				return hc.isHA()
-			},
+			shouldRun: hc.isHA,
 		},
 	}
 }
