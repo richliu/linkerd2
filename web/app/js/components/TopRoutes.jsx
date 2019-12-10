@@ -160,6 +160,7 @@ class TopRoutes extends React.Component {
   stopServerPolling = () => {
     window.clearInterval(this.timerId);
     this.api.cancelCurrentRequests();
+    this.setState({ pendingRequests: false });
   }
 
   handleBtnClick = inProgress => () => {

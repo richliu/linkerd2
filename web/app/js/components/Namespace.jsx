@@ -95,6 +95,7 @@ class Namespaces extends React.Component {
   stopServerPolling() {
     window.clearInterval(this.timerId);
     this.api.cancelCurrentRequests();
+    this.setState({ pendingRequests: false });
   }
 
   loadFromServer() {

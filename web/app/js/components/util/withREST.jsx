@@ -82,6 +82,7 @@ const withREST = (WrappedComponent, componentPromises, options={}) => {
 
     stopServerPolling = () => {
       this.api.cancelCurrentRequests();
+      this.setState({ pendingRequests: false });
       if (localOptions.poll) {
         window.clearInterval(this.timerId);
       }

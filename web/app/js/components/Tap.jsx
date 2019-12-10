@@ -204,6 +204,7 @@ class Tap extends React.Component {
   stopServerPolling() {
     window.clearInterval(this.timerId);
     this.api.cancelCurrentRequests();
+    this.setState({ pendingRequests: false });
   }
 
   startTapStreaming() {

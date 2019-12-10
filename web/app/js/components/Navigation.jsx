@@ -215,6 +215,7 @@ class NavigationBase extends React.Component {
   stopServerPolling() {
     window.clearInterval(this.timerId);
     this.api.cancelCurrentRequests();
+    this.setState({ pendingRequests: false });
   }
 
   // API returns namespaces for namespace select button. No metrics returned.
