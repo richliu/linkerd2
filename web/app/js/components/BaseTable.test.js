@@ -83,7 +83,7 @@ describe("Tests for <BaseTable>", () => {
     expect(emptyCard).toHaveLength(1);
   });
 
-  it("filters the table", () => {
+  it("filters the table based on text input", () => {
     let extraProps = _merge({}, defaultProps, {
       tableRows: [{
         deployment: "authors",
@@ -114,8 +114,7 @@ describe("Tests for <BaseTable>", () => {
     expect(component.find("TableBody").find("TableRow")).toHaveLength(2);
 
     component.find("BaseTable").instance().setState({
-      filterBy: new RegExp(/auth/),
-      orderBy: "deployment",
+      filterBy: new RegExp(/book/),
     });
     component.update();
     expect(component.find("TableBody").find("TableRow")).toHaveLength(1);

@@ -127,7 +127,7 @@ describe('Utils', () => {
   });
 
   describe('regexFilterString', () => {
-    it('converts string to a valid regex for namespaces', () => {
+    it('converts string to a valid regex when filtering namespace selection options', () => {
       expect(regexFilterString('emojivoto')).toEqual(new RegExp(/emojivoto/));
       expect(regexFilterString('emojivoto123')).toEqual(new RegExp(/emojivoto123/));
       expect(regexFilterString('emojivoto*')).toEqual(new RegExp(/emojivoto.+/));
