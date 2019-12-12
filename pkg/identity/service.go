@@ -38,6 +38,7 @@ type (
 	Service struct {
 		validator                                  Validator
 		trustAnchors                               string
+		trustAnchorsPool                           *x509.CertPool
 		issuer                                     *tls.Issuer
 		issuerMutex                                *sync.RWMutex
 		validity                                   *tls.Validity
@@ -71,6 +72,10 @@ type (
 // Initialize loads the issuer certs from disk so it can start service CSRs to proxies
 func (svc *Service) Initialize() error {
 	credentials, err := svc.loadCredentials()
+	if err != nil {
+		return err
+	}
+	svc.trustAnchorsPool, err = tls.DecodePEMCertPool(svc.trustAnchors)
 	if err != nil {
 		return err
 	}
@@ -110,7 +115,6 @@ func (svc *Service) loadCredentials() (tls.Issuer, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read CA from disk: %s", err)
 	}
-
 	issuerData := &issuercerts.IssuerCertData{
 		TrustAnchors: svc.trustAnchors,
 		IssuerCrt:    crt,
@@ -131,6 +135,7 @@ func NewService(validator Validator, trustAnchors string, validity *tls.Validity
 	return &Service{
 		validator,
 		trustAnchors,
+		nil,
 		nil,
 		&sync.RWMutex{},
 		validity,
@@ -153,14 +158,7 @@ func (svc *Service) ensureIssuerStillValid() error {
 	issuer := *svc.issuer
 	switch is := issuer.(type) {
 	case *tls.CA:
-		roots, err := tls.DecodePEMCertPool(svc.trustAnchors)
-		if err != nil {
-			return err
-		}
-		if err := is.Cred.Verify(roots, svc.expectedName); err != nil {
-			return err
-		}
-		return nil
+		return is.Cred.Verify(svc.trustAnchorsPool, svc.expectedName)
 	default:
 		return nil
 	}
