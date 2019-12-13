@@ -216,6 +216,7 @@ describe('Namespace Select Button', () => {
         namespaces: namespaces,
       });
       component.update();
+      // 5 items = Input - "Select Namespace..." + "All Namespaces" item + 3 added namespaces
       expect(component.find("Menu").find("MenuItem")).toHaveLength(5);
     });
 
@@ -242,6 +243,7 @@ describe('Namespace Select Button', () => {
         formattedNamespaceFilter: "de",
       });
       component.update();
+      // 3 items = "Input - Select Namespace..." + "All Namespaces" item + 1 namespace which matches "de" string
       expect(component.find("Menu").find("MenuItem")).toHaveLength(3);
     });
   });
