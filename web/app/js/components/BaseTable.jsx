@@ -33,10 +33,12 @@ const styles = theme => ({
   tableHeader: {
     fontSize: "12px",
     opacity: 0.6,
+    lineHeight: 1,
   },
   tableHeaderActive: {
     fontSize: "12px",
     opacity: 1,
+    lineHeight: 1,
   },
   activeSortIcon: {
     opacity: 1,

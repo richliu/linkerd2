@@ -32,6 +32,7 @@ const styles = theme => ({
   tableHeader: {
     fontSize: "12px",
     opacity: 0.6,
+    lineHeight: 1,
   },
   denseTable: {
     paddingRight: "8px",

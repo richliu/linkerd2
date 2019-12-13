@@ -85,6 +85,9 @@ const styles = theme => {
       width: drawerWidth,
       transition: entering,
     },
+    drawerPaper: {
+      width: 'inherit',
+    },
     toolbar: theme.mixins.toolbar,
     navToolbar: {
       display: 'flex',
@@ -549,6 +552,7 @@ class NavigationBase extends React.Component {
         <Hidden smDown>
           <Drawer
             className={classes.drawer}
+            classes={{ paper: classes.drawerPaper }}
             variant="permanent">
             {drawer}
           </Drawer>
@@ -578,6 +582,7 @@ class NavigationBase extends React.Component {
           </AppBar>
           <Drawer
             className={classes.drawer}
+            classes={{ paper: classes.drawerPaper }}
             variant="temporary"
             onClick={this.handleDrawerClick}
             onClose={this.handleDrawerClick}
