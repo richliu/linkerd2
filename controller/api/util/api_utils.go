@@ -179,6 +179,15 @@ func BuildStatSummaryRequest(p StatsSummaryRequestParams) (*pb.StatSummaryReques
 		return nil, err
 	}
 
+	excludeFromAll := make([]string, 0, len(p.ExcludeFromAll))
+	for _, entry := range p.ExcludeFromAll {
+		crn, err := k8s.CanonicalResourceNameFromFriendlyName(entry)
+		if err != nil {
+			return nil, err
+		}
+		excludeFromAll = append(excludeFromAll, crn)
+	}
+
 	statRequest := &pb.StatSummaryRequest{
 		Selector: &pb.ResourceSelection{
 			Resource: &pb.Resource{
@@ -190,7 +199,7 @@ func BuildStatSummaryRequest(p StatsSummaryRequestParams) (*pb.StatSummaryReques
 		TimeWindow:     window,
 		SkipStats:      p.SkipStats,
 		TcpStats:       p.TCPStats,
-		ExcludeFromAll: p.ExcludeFromAll,
+		ExcludeFromAll: excludeFromAll,
 	}
 
 	if p.ToName != "" || p.ToType != "" || p.ToNamespace != "" {
