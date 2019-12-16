@@ -8,7 +8,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /go/bin/linkerd-cni -v -mod=readonly ./
 
 FROM docker.io/richliu/base:2019-09-04.01
 WORKDIR /linkerd
-RUN curl -kL -o $(which jq) http://192.168.110.2/jq-linux64
+RUN curl -kL -o $(which jq) https://github.com/richliu/linkerd2-arm64/raw/master/release/jq-linux64
 COPY --from=golang /go/bin/linkerd-cni /opt/cni/bin/
 COPY LICENSE .
 COPY cni-plugin/deployment/scripts/install-cni.sh .

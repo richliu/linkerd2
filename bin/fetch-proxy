@@ -26,7 +26,7 @@ mkdir -p "$builddir"
 cd "$builddir"
 #curl -sLO "$assetbase/$pkgfile"
 #curl -sLO "$assetbase/$shafile"
-curl -sLO "http://192.168.110.2/linkerd2-proxy-8b6f9a0.tar.gz"
+curl -sLO "https://github.com/richliu/linkerd2-arm64/raw/master/release/linkerd2-proxy-8b6f9a0.tar.gz"
 
 
 tar -zxvf "$pkgfile" >&2
