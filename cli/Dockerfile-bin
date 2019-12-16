@@ -1,5 +1,5 @@
 ## compile binaries
-FROM gcr.io/linkerd-io/go-deps:7ea16e73 as golang
+FROM docker.io/richliu/go-deps:0581638c as golang
 WORKDIR /linkerd-build
 COPY cli cli
 COPY charts charts
@@ -15,15 +15,15 @@ RUN mkdir -p /out
 RUN go generate -mod=readonly ./pkg/charts/static
 
 # Cache builds without version info
-RUN CGO_ENABLED=0 GOOS=darwin  go build -o /out/linkerd-darwin  -tags prod -mod=readonly -ldflags "-s -w" ./cli
-RUN CGO_ENABLED=0 GOOS=linux   go build -o /out/linkerd-linux   -tags prod -mod=readonly -ldflags "-s -w" ./cli
-RUN CGO_ENABLED=0 GOOS=windows go build -o /out/linkerd-windows -tags prod -mod=readonly -ldflags "-s -w" ./cli
+# RUN CGO_ENABLED=0 GOOS=darwin  go build -o /out/linkerd-darwin  -tags prod -mod=readonly -ldflags "-s -w" ./cli
+RUN CGO_ENABLED=0 GOOS=linux  GOARCH=arm64  go build -o /out/linkerd-linux   -tags prod -mod=readonly -ldflags "-s -w" ./cli
+# RUN CGO_ENABLED=0 GOOS=windows go build -o /out/linkerd-windows -tags prod -mod=readonly -ldflags "-s -w" ./cli
 
 ARG LINKERD_VERSION
 ENV GO_LDFLAGS="-s -w -X github.com/linkerd/linkerd2/pkg/version.Version=${LINKERD_VERSION}"
-RUN CGO_ENABLED=0 GOOS=darwin  go build -o /out/linkerd-darwin  -tags prod -mod=readonly -ldflags "${GO_LDFLAGS}" ./cli
-RUN CGO_ENABLED=0 GOOS=linux   go build -o /out/linkerd-linux   -tags prod -mod=readonly -ldflags "${GO_LDFLAGS}" ./cli
-RUN CGO_ENABLED=0 GOOS=windows go build -o /out/linkerd-windows -tags prod -mod=readonly -ldflags "${GO_LDFLAGS}" ./cli
+# RUN CGO_ENABLED=0 GOOS=darwin  go build -o /out/linkerd-darwin  -tags prod -mod=readonly -ldflags "${GO_LDFLAGS}" ./cli
+RUN CGO_ENABLED=0 GOOS=linux  GOARCH=arm64 go build -o /out/linkerd-linux   -tags prod -mod=readonly -ldflags "${GO_LDFLAGS}" ./cli
+# RUN CGO_ENABLED=0 GOOS=windows go build -o /out/linkerd-windows -tags prod -mod=readonly -ldflags "${GO_LDFLAGS}" ./cli
 
 ## export without sources & dependencies
 FROM scratch

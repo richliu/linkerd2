@@ -1,5 +1,5 @@
 ## compile controller service
-FROM gcr.io/linkerd-io/go-deps:7ea16e73 as golang
+FROM docker.io/richliu/go-deps:0581638c as golang
 WORKDIR /linkerd-build
 COPY controller/gen controller/gen
 COPY pkg pkg
@@ -11,7 +11,7 @@ COPY charts/partials charts/partials
 # TODO: `go generate` does not honor -mod=readonly
 RUN go generate -mod=readonly ./pkg/charts/static
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /out/controller -tags prod -mod=readonly -ldflags "-s -w" ./controller/cmd
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o /out/controller -tags prod -mod=readonly -ldflags "-s -w" ./controller/cmd
 
 ## package runtime
 FROM scratch

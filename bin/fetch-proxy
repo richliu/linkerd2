@@ -11,10 +11,11 @@ bindir=$( cd "${0%/*}" && pwd )
 rootdir=$( cd "$bindir"/.. && pwd )
 builddir="$rootdir/target/proxy"
 
-version=${1:-latest}
-if [ "$version" = latest ]; then
-  version=$(curl -sL https://api.github.com/repos/linkerd/linkerd2-proxy/releases/latest |jq -r .tag_name | sed 's,^release/,,')
-fi
+#version=${1:-latest}
+#if [ "$version" = latest ]; then
+#  version=$(curl -sL https://api.github.com/repos/linkerd/linkerd2-proxy/releases/latest |jq -r .tag_name | sed 's,^release/,,')
+#fi
+version="8b6f9a0"
 
 assetbase="https://github.com/linkerd/linkerd2-proxy/releases/download/release%2F${version}"
 pkgname="linkerd2-proxy-${version}"
@@ -23,16 +24,18 @@ shafile="${pkgname}.txt"
 
 mkdir -p "$builddir"
 cd "$builddir"
-curl -sLO "$assetbase/$pkgfile"
-curl -sLO "$assetbase/$shafile"
+#curl -sLO "$assetbase/$pkgfile"
+#curl -sLO "$assetbase/$shafile"
+curl -sLO "http://192.168.110.2/linkerd2-proxy-8b6f9a0.tar.gz"
+
 
 tar -zxvf "$pkgfile" >&2
-expected=$(awk '{print $1}' "$shafile")
-computed=$(sha256sum "$pkgfile" | awk '{print $1}')
-if [ "$computed" != "$expected" ]; then
-  echo 'sha mismatch' >&2
-  exit 1
-fi
+#expected=$(awk '{print $1}' "$shafile")
+#computed=$(sha256sum "$pkgfile" | awk '{print $1}')
+#if [ "$computed" != "$expected" ]; then
+#  echo 'sha mismatch' >&2
+#  exit 1
+#fi
 
 mv "$pkgname/LICENSE" .
 mv "$pkgname/bin/linkerd2-proxy" .
